@@ -10,17 +10,19 @@
  */
 
 // Storage key for localStorage
-const STORAGE_KEY = 'todos';
+// const STORAGE_KEY = 'todos';
 
 // Get all todos
 export const getAllTodos = async () => {
   try {
-    const todos = localStorage.getItem(STORAGE_KEY);
-    return todos ? JSON.parse(todos) : [];
+    // const todos = localStorage.getItem(STORAGE_KEY);
+    // return todos ? JSON.parse(todos) : [];
     
     // When integrating with Frappe:
-    // const response = await fetch('/api/resource/Todo');
+    const response = await fetch('/api/resource/ToDo');
     // return response.json();
+    const data = await response.json();
+    return data.data || [];
   } catch (error) {
     console.error('Error fetching todos:', error);
     return [];
@@ -30,30 +32,31 @@ export const getAllTodos = async () => {
 // Add a new todo
 export const addTodo = async (text) => {
   try {
-    const todos = await getAllTodos();
-    const newTodo = {
-      id: Date.now(),
-      text,
-      completed: false,
-      createdAt: new Date().toISOString()
-    };
+    // const todos = await getAllTodos();
+    // const newTodo = {
+    //   id: Date.now(),
+    //   text,
+    //   completed: false,
+    //   createdAt: new Date().toISOString()
+    // };
     
-    todos.push(newTodo);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-    return newTodo;
+    // todos.push(newTodo);
+    // localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    // return newTodo;
     
     // When integrating with Frappe:
-    // const response = await fetch('/api/resource/Todo', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     text: text,
-    //     completed: 0,
-    //   })
-    // });
-    // return response.json();
+    const response = await fetch('/api/resource/ToDo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        description: text,
+        status: 'Open',
+      })
+    });
+    // After adding, fetch the updated list so UI has all todos
+    return await getAllTodos();
   } catch (error) {
     console.error('Error adding todo:', error);
     throw error;
@@ -63,26 +66,27 @@ export const addTodo = async (text) => {
 // Toggle todo completion status
 export const toggleTodo = async (id) => {
   try {
-    const todos = await getAllTodos();
-    const todo = todos.find(t => t.id === id);
+    // const todos = await getAllTodos();
+    // const todo = todos.find(t => t.id === id);
     
-    if (todo) {
-      todo.completed = !todo.completed;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-      return todo;
-    }
+    // if (todo) {
+    //   todo.completed = !todo.completed;
+    //   localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    //   return todo;
+    // }
     
     // When integrating with Frappe:
-    // const response = await fetch(`/api/resource/Todo/${id}`, {
-    //   method: 'PUT',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     completed: completed ? 1 : 0
-    //   })
-    // });
+    const response = await fetch(`/api/resource/ToDo/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        status: 'Closed'
+      })
+    });
     // return response.json();
+    return await getAllTodos();
   } catch (error) {
     console.error('Error toggling todo:', error);
     throw error;
@@ -92,16 +96,17 @@ export const toggleTodo = async (id) => {
 // Delete a todo
 export const deleteTodo = async (id) => {
   try {
-    let todos = await getAllTodos();
-    todos = todos.filter(t => t.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-    return { success: true };
+    // let todos = await getAllTodos();
+    // todos = todos.filter(t => t.id !== id);
+    // localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    // return { success: true };
     
     // When integrating with Frappe:
-    // const response = await fetch(`/api/resource/Todo/${id}`, {
-    //   method: 'DELETE'
-    // });
+    const response = await fetch(`/api/resource/ToDo/${id}`, {
+      method: 'DELETE'
+    });
     // return response.json();
+    return await getAllTodos();
   } catch (error) {
     console.error('Error deleting todo:', error);
     throw error;
