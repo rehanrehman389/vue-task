@@ -32,6 +32,7 @@ const loading = ref(true);
 onMounted(async () => {
   try {
     todos.value = await getAllTodos();
+    console.log(todos.value);
   } catch (error) {
     console.error('Failed to load todos:', error);
   } finally {
@@ -68,7 +69,7 @@ async function toggleTodo(id) {
 async function deleteTodo(id) {
   try {
     await deleteTodoService(id);
-    todos.value = todos.value.filter(todo => todo.id !== id);
+    todos.value = todos.value.filter(todo => todo.name !== id);
   } catch (error) {
     console.error('Failed to delete todo:', error);
   }

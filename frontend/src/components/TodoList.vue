@@ -2,26 +2,27 @@
   <div v-if="todos.length > 0" class="space-y-2">
     <div 
       v-for="todo in todos" 
-      :key="todo.id" 
+      :key="todo.name" 
       class="flex items-center justify-between p-3 bg-white rounded-md shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
     >
       <div class="flex items-center">
         <input
           type="checkbox"
-          :checked="todo.completed"
-          @change="$emit('toggle-todo', todo.id)"
+          :checked="todo.status === 'Closed'"
+          @change="$emit('toggle-todo', todo.name)"
           class="h-5 w-5 text-blue-600 rounded focus:ring-blue-500 mr-3"
         />
-        <span :class="{ 'line-through text-gray-400': todo.completed }">
-          {{ todo.text }}
+        <span :class="{ 'line-through text-gray-400': todo.status === 'Closed' }"
+        v-html="todo.description"
+        >
         </span>
       </div>
       <div class="flex items-center">
         <span class="text-xs text-gray-500 mr-3">
-          {{ formatDate(todo.createdAt) }}
+          {{ formatDate(todo.creation) }}
         </span>
         <button 
-          @click="$emit('delete-todo', todo.id)"
+          @click="$emit('delete-todo', todo.name)"
           class="text-red-500 hover:text-red-700"
           aria-label="Delete todo"
         >

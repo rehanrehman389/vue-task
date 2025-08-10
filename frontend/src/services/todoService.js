@@ -8,7 +8,7 @@
  * 1. Replace the localStorage functions with API calls
  * 2. Update the response handling to match Frappe's API format
  */
-
+import { createListResource, createResource } from 'frappe-ui'
 // Storage key for localStorage
 // const STORAGE_KEY = 'todos';
 
@@ -18,8 +18,10 @@ export const getAllTodos = async () => {
     // const todos = localStorage.getItem(STORAGE_KEY);
     // return todos ? JSON.parse(todos) : [];
     
-    // When integrating with Frappe:
-    const response = await fetch('/api/resource/ToDo');
+    // When :
+    const response = await fetch(
+      '/api/resource/ToDo?fields=["name","description","status", "creation"]'
+    );
     // return response.json();
     const data = await response.json();
     return data.data || [];
@@ -28,6 +30,22 @@ export const getAllTodos = async () => {
     return [];
   }
 };
+
+// export const todos = createListResource({
+//   doctype: 'ToDo',
+//   fields: ['description'],
+//   orderBy: 'creation desc',
+//   start: 0,
+//   pageLength: 5,
+// })
+
+// // Fetch todos initially
+// todos.fetch()
+
+// // Get all todos (returns reactive data)
+// export const getAllTodos = () => {
+//   return todos.data || []
+// }
 
 // Add a new todo
 export const addTodo = async (text) => {
@@ -56,7 +74,9 @@ export const addTodo = async (text) => {
       })
     });
     // After adding, fetch the updated list so UI has all todos
-    return await getAllTodos();
+    // return await getAllTodos();
+    const data = await response.json();
+    return data.data; // Return only the new todo
   } catch (error) {
     console.error('Error adding todo:', error);
     throw error;
@@ -86,7 +106,9 @@ export const toggleTodo = async (id) => {
       })
     });
     // return response.json();
-    return await getAllTodos();
+    // return await getAllTodos();
+    const data = await response.json();
+    return data.data; // Return only the updated todo
   } catch (error) {
     console.error('Error toggling todo:', error);
     throw error;
@@ -106,7 +128,8 @@ export const deleteTodo = async (id) => {
       method: 'DELETE'
     });
     // return response.json();
-    return await getAllTodos();
+    // return await getAllTodos();
+    return { success: true, id };
   } catch (error) {
     console.error('Error deleting todo:', error);
     throw error;
